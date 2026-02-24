@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class palindromeCheckerApp {
 
     private static final String APP_NAME = "Palindrome Checker App";
-    private static final String APP_VERSION = "Version 1.0 - UC10 (Case-Insensitive & Space-Ignored)";
+    private static final String APP_VERSION = "Version 1.0 - UC11 (OOP Palindrome Service)";
 
     public static void main(String[] args) {
 
@@ -17,18 +17,48 @@ public class palindromeCheckerApp {
         System.out.print("Enter a string to check if it is a palindrome: ");
         String input = scanner.nextLine();
 
-        // Step 1: Normalize string (lowercase + remove non-alphanumeric)
-        String normalized = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        // Create PalindromeChecker object
+        PalindromeChecker checker = new PalindromeChecker(input);
 
-        // Step 2: Check palindrome using simple reverse logic
-        String reversed = new StringBuilder(normalized).reverse().toString();
+        // Use checkPalindrome() method
+        boolean result = checker.checkPalindrome();
 
-        if (normalized.equals(reversed)) {
+        if (result) {
             System.out.println("Result: The entered string IS a Palindrome.");
         } else {
             System.out.println("Result: The entered string is NOT a Palindrome.");
         }
 
         scanner.close();
+    }
+}
+
+// Encapsulated Palindrome Logic
+class PalindromeChecker {
+
+    private String text;
+
+    // Constructor
+    public PalindromeChecker(String text) {
+        this.text = text;
+    }
+
+    // Public method to check palindrome
+    public boolean checkPalindrome() {
+
+        // Simple stack-based implementation
+        java.util.Stack<Character> stack = new java.util.Stack<>();
+
+        for (char ch : text.toCharArray()) {
+            stack.push(ch);
+        }
+
+        for (char ch : text.toCharArray()) {
+            if (stack.pop() != ch) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
