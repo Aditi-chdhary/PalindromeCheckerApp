@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class palindromeCheckerApp {
 
     private static final String APP_NAME = "Palindrome Checker App";
-    private static final String APP_VERSION = "Version 1.0 - UC9 (Recursive Method)";
+    private static final String APP_VERSION = "Version 1.0 - UC10 (Case-Insensitive & Space-Ignored)";
 
     public static void main(String[] args) {
 
@@ -17,31 +17,18 @@ public class palindromeCheckerApp {
         System.out.print("Enter a string to check if it is a palindrome: ");
         String input = scanner.nextLine();
 
-        boolean result = isPalindromeRecursive(input, 0, input.length() - 1);
+        // Step 1: Normalize string (lowercase + remove non-alphanumeric)
+        String normalized = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
-        if (result) {
+        // Step 2: Check palindrome using simple reverse logic
+        String reversed = new StringBuilder(normalized).reverse().toString();
+
+        if (normalized.equals(reversed)) {
             System.out.println("Result: The entered string IS a Palindrome.");
         } else {
             System.out.println("Result: The entered string is NOT a Palindrome.");
         }
 
         scanner.close();
-    }
-
-    // Recursive Palindrome Logic
-    private static boolean isPalindromeRecursive(String str, int start, int end) {
-
-        // Base Condition: If pointers cross or meet
-        if (start >= end) {
-            return true;
-        }
-
-        // If mismatch found
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
-        }
-
-        // Recursive call (smaller subproblem)
-        return isPalindromeRecursive(str, start + 1, end - 1);
     }
 }
