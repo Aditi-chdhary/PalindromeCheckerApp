@@ -3,95 +3,99 @@ import java.util.Stack;
 import java.util.Deque;
 import java.util.LinkedList;
 
-// Main Application
 public class palindromeCheckerApp {
-
-    private static final String APP_NAME = "Palindrome Checker App";
-    private static final String APP_VERSION = "Version 1.0 - UC12 (Strategy Pattern)";
 
     public static void main(String[] args) {
 
-        System.out.println("=================================================");
-        System.out.println("        Welcome to " + APP_NAME);
-        System.out.println("        " + APP_VERSION);
-        System.out.println("=================================================");
-
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter a string to check if it is a palindrome: ");
+        System.out.println("=================================================");
+        System.out.println("        Palindrome Checker App - Performance Comparison");
+        System.out.println("=================================================");
+
+        System.out.print("Enter a string to check: ");
         String input = scanner.nextLine();
 
-        System.out.println("\nSelect strategy:");
-        System.out.println("1. Stack-based");
-        System.out.println("2. Deque-based");
-        System.out.print("Enter choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // consume newline
+        System.out.println("\nRunning multiple palindrome algorithms...");
 
-        PalindromeStrategy strategy;
+        // UC3: String Reverse
+        long start = System.nanoTime();
+        boolean resultUC3 = stringReverseCheck(input);
+        long end = System.nanoTime();
+        System.out.println("UC3 - String Reverse: Result=" + resultUC3 + ", Time=" + (end - start) + " ns");
 
-        switch (choice) {
-            case 1:
-                strategy = new StackStrategy();
-                break;
-            case 2:
-                strategy = new DequeStrategy();
-                break;
-            default:
-                System.out.println("Invalid choice. Using Stack-based as default.");
-                strategy = new StackStrategy();
-        }
+        // UC5: Stack-based
+        start = System.nanoTime();
+        boolean resultUC5 = stackCheck(input);
+        end = System.nanoTime();
+        System.out.println("UC5 - Stack-based: Result=" + resultUC5 + ", Time=" + (end - start) + " ns");
 
-        boolean result = strategy.isPalindrome(input);
+        // UC6: Queue+Stack
+        start = System.nanoTime();
+        boolean resultUC6 = queueStackCheck(input);
+        end = System.nanoTime();
+        System.out.println("UC6 - Queue+Stack: Result=" + resultUC6 + ", Time=" + (end - start) + " ns");
 
-        if (result) {
-            System.out.println("Result: The entered string IS a Palindrome.");
-        } else {
-            System.out.println("Result: The entered string is NOT a Palindrome.");
-        }
+        // UC7: Deque-based
+        start = System.nanoTime();
+        boolean resultUC7 = dequeCheck(input);
+        end = System.nanoTime();
+        System.out.println("UC7 - Deque-based: Result=" + resultUC7 + ", Time=" + (end - start) + " ns");
+
+        // UC9: Recursive
+        start = System.nanoTime();
+        boolean resultUC9 = recursiveCheck(input, 0, input.length() - 1);
+        end = System.nanoTime();
+        System.out.println("UC9 - Recursive: Result=" + resultUC9 + ", Time=" + (end - start) + " ns");
 
         scanner.close();
     }
-}
 
-// Strategy Interface
-interface PalindromeStrategy {
-    boolean isPalindrome(String text);
-}
+    // UC3: String Reverse
+    private static boolean stringReverseCheck(String text) {
+        String reversed = "";
+        for (int i = text.length() - 1; i >= 0; i--) {
+            reversed += text.charAt(i);
+        }
+        return text.equals(reversed);
+    }
 
-// Stack-based Strategy
-class StackStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean isPalindrome(String text) {
+    // UC5: Stack-based
+    private static boolean stackCheck(String text) {
         Stack<Character> stack = new Stack<>();
+        for (char ch : text.toCharArray()) stack.push(ch);
+        for (char ch : text.toCharArray()) if (stack.pop() != ch) return false;
+        return true;
+    }
+
+    // UC6: Queue+Stack
+    private static boolean queueStackCheck(String text) {
+        Stack<Character> stack = new Stack<>();
+        java.util.Queue<Character> queue = new LinkedList<>();
         for (char ch : text.toCharArray()) {
             stack.push(ch);
+            queue.add(ch);
         }
-        for (char ch : text.toCharArray()) {
-            if (stack.pop() != ch) {
-                return false;
-            }
+        while (!queue.isEmpty()) {
+            if (queue.remove() != stack.pop()) return false;
         }
         return true;
     }
-}
 
-// Deque-based Strategy
-class DequeStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean isPalindrome(String text) {
+    // UC7: Deque-based
+    private static boolean dequeCheck(String text) {
         Deque<Character> deque = new LinkedList<>();
-        for (char ch : text.toCharArray()) {
-            deque.addLast(ch);
-        }
-
+        for (char ch : text.toCharArray()) deque.addLast(ch);
         while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) {
-                return false;
-            }
+            if (deque.removeFirst() != deque.removeLast()) return false;
         }
         return true;
+    }
+
+    // UC9: Recursive
+    private static boolean recursiveCheck(String text, int start, int end) {
+        if (start >= end) return true;
+        if (text.charAt(start) != text.charAt(end)) return false;
+        return recursiveCheck(text, start + 1, end - 1);
     }
 }
