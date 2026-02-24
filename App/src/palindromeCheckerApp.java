@@ -1,9 +1,10 @@
 import java.util.Scanner;
+import java.util.Stack;
 
 public class palindromeCheckerApp {
 
     private static final String APP_NAME = "Palindrome Checker App";
-    private static final String APP_VERSION = "Version 1.0 - UC4 (Character Array Method)";
+    private static final String APP_VERSION = "Version 1.0 - UC5 (Stack Method)";
 
     public static void main(String[] args) {
 
@@ -19,22 +20,23 @@ public class palindromeCheckerApp {
         System.out.print("Enter a string to check if it is a palindrome: ");
         String inputString = scanner.nextLine();
 
-        // Convert string to character array
-        char[] charArray = inputString.toCharArray();
+        // Create Stack
+        Stack<Character> stack = new Stack<>();
 
-        // Two-pointer approach
-        int start = 0;
-        int end = charArray.length - 1;
+        // Push all characters into stack
+        for (int i = 0; i < inputString.length(); i++) {
+            stack.push(inputString.charAt(i));
+        }
 
+        // Check palindrome by popping and comparing
         boolean isPalindrome = true;
 
-        while (start < end) {
-            if (charArray[start] != charArray[end]) {
+        for (int i = 0; i < inputString.length(); i++) {
+            char poppedChar = stack.pop();
+            if (inputString.charAt(i) != poppedChar) {
                 isPalindrome = false;
                 break;
             }
-            start++;
-            end--;
         }
 
         // Display result
